@@ -2,7 +2,7 @@
 It is a small repository containing implementations of some monads.
 
 ## Optional
-`Optional` is useful when you don‘t exactly sure if you‘re dealing with an empty value of some meaningful one. It provides a clean and expressive API.
+`Optional` is useful when you don‘t exactly sure if you‘re dealing with an empty value or some meaningful one. It provides a clean and expressive API.
 
 ```php
 <?php
