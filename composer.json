@@ -1,5 +1,5 @@
 {
-    "name": "franzose/php-monads",
+    "name": "franzose/lemonad",
     "description": "Some monads implemented in PHP",
     "keywords": ["monad", "monads", "optional", "maybe", "either"],
     "license": "MIT",
