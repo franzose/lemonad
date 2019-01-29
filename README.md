@@ -9,6 +9,7 @@ It is a small repository containing implementations of some monads.
 declare(strict_types=1);
 
 use Lemonad\Optional;
+use function Lemonad\optional;
 
 $empty = Optional::empty();
 $empty->isPresent(); // false
@@ -18,7 +19,7 @@ $optOf42 = Optional::of(42);
 $optOf42->isPresent(); // true
 $optOf42->isAbsent(); // false
 
-$null = Optional::ofNullable(null);
+$null = optional(null);
 $null->equals(Optional::empty()); // true
 $null->isAbsent(); // true
 $null->isPresent(); // false
@@ -37,7 +38,7 @@ $absent = Optional::of(42)->filter(function (int $value) {
 $absent->isPresent(); // false
 $absent->isAbsent(); // true
 
-Optional::of(42)->map(function (int $value) {
+optional(42)->map(function (int $value) {
     return $value + 1;
 })->get(); // 43
 
@@ -78,6 +79,7 @@ Here are some examples of the Maybe monad:
 declare(strict_types=1);
 
 use Lemonad\Maybe;
+use function Lemonad\maybe;
 
 $unknown = Maybe::unknown(); // unknown forever
 $unknown->isKnown(); // false
@@ -93,7 +95,7 @@ Maybe::of(42)->to(function (int $value) {
     return $value + 1;
 }); // Maybe with value of 43
 
-Maybe::of(42)->query(function (int $value) {
+maybe(42)->query(function (int $value) {
     return 42 === $value;
 }); // Maybe with value of boolean true
 

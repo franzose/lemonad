@@ -19,7 +19,10 @@
         "phpstan/phpstan": "^0.11.0"
     },
     "autoload": {
-        "psr-4": { "Lemonad\\": "src/" }
+        "psr-4": { "Lemonad\\": "src/" },
+        "files": [
+            "src/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4" : { "Lemonad\\Tests\\": "tests/" }
