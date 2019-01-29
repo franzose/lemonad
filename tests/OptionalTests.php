@@ -172,7 +172,7 @@ final class OptionalTests extends TestCase
             $foo = 43;
         };
 
-        Optional::ofNullable($value)->isPresentOrElse($consumer, $action);
+        Optional::ofNullable($value)->ifPresentOrElse($consumer, $action);
 
         static::assertEquals($expected, $foo);
     }

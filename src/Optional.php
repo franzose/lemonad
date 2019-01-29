@@ -133,7 +133,7 @@ final class Optional
      * @param callable $consumer
      * @param callable $action
      */
-    public function isPresentOrElse(callable $consumer, callable $action): void
+    public function ifPresentOrElse(callable $consumer, callable $action): void
     {
         $this->isPresent()
             ? $consumer($this->value)
