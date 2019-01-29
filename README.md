@@ -69,3 +69,45 @@ Optional::ofNullable(null)->orElseThrow(function () {
     return new \InvalidArgumentException('No! No! No!');
 }); // it will throw \InvalidArgumentException exception
 ```
+
+## Maybe
+Here are some examples of the Maybe monad:
+
+```php
+<?php
+declare(strict_types=1);
+
+use Lemonad\Maybe;
+
+$unknown = Maybe::unknown(); // unknown forever
+$unknown->isKnown(); // false
+
+$known = Maybe::definitely(42);
+$known->isKnown(); // true
+
+Maybe::of(null)->isKnown(); // false
+Maybe::of(42)->isKnown(); // true
+Maybe::of(42)->or(999); // 42
+Maybe::of(42)->orElse(Maybe::definitely(999)); // same instance with value of 42
+Maybe::of(42)->to(function (int $value) {
+    return $value + 1;
+}); // Maybe with value of 43
+
+Maybe::of(42)->query(function (int $value) {
+    return 42 === $value;
+}); // Maybe with value of boolean true
+
+Maybe::of(42)->query(function (int $value) {
+    return 43 === $value;
+}); // Maybe with value of boolean false
+
+Maybe::of(null)->or(42); // 42
+Maybe::of(null)->orElse(Maybe::definitely(42)); // Maybe with value of 42
+Maybe::of(null)->to(function () {}); // always a new instance of 'unknown' Maybe
+Maybe::of(null)->query(function () {}); // always a new instance of 'unknown' Maybe
+Maybe::of(null)->equals(Maybe::unknown()); // equals is always false
+
+echo Maybe::definitely('Brian')->to(function (string $name) {
+    return $name . ' Adams';
+}); // will output "Brian Adams"
+```
