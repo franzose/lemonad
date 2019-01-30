@@ -8,7 +8,7 @@ use Lemonad\Exception\NullValueException;
 use Lemonad\Optional;
 use PHPUnit\Framework\TestCase;
 
-final class OptionalTests extends TestCase
+final class OptionalTest extends TestCase
 {
     public function testOfShouldNotAllowNull(): void
     {

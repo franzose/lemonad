@@ -7,7 +7,7 @@ use Lemonad\Exception\NullValueException;
 use Lemonad\Maybe;
 use PHPUnit\Framework\TestCase;
 
-final class MaybeTests extends TestCase
+final class MaybeTest extends TestCase
 {
     public static function testOf(): void
     {
