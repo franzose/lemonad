@@ -5,6 +5,7 @@ namespace Lemonad\Tests;
 
 use Lemonad\Exception\NoSuchValueException;
 use Lemonad\Exception\NullValueException;
+use function Lemonad\noop;
 use Lemonad\Optional;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;

@@ -5,6 +5,7 @@ namespace Lemonad\Tests;
 
 use Lemonad\Exception\NullValueException;
 use Lemonad\Maybe;
+use function Lemonad\noop;
 use PHPUnit\Framework\TestCase;
 
 final class MaybeTest extends TestCase
