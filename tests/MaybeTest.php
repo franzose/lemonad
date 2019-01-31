@@ -20,22 +20,14 @@ final class MaybeTest extends TestCase
         $unknown = Maybe::unknown();
         $maybe42 = Maybe::definitely(42);
 
-        $supplier = function (): int {
-            return 42;
-        };
-
-        $callable = function (): void {
-            //
-        };
-
         static::assertFalse($unknown->isKnown());
         static::assertEquals(42, $unknown->or(42));
-        static::assertEquals(42, $unknown->or($supplier));
+        static::assertEquals(42, $unknown->or(supplier(42)));
         static::assertTrue($unknown->orElse($maybe42)->equals($maybe42));
         static::assertFalse($unknown->equals(Maybe::unknown()));
         static::assertFalse($unknown->equals($maybe42));
-        static::assertFalse($unknown->to($callable)->isKnown());
-        static::assertFalse($unknown->query($callable)->isKnown());
+        static::assertFalse($unknown->to(noop())->isKnown());
+        static::assertFalse($unknown->query(noop())->isKnown());
     }
 
     public function testDefinitelyShouldNotAcceptNullValue(): void
@@ -49,13 +41,6 @@ final class MaybeTest extends TestCase
     {
         $maybe = Maybe::definitely(42);
         $maybe84 = Maybe::definitely(84);
-        $mapper = function (int $value): int {
-            return $value + 1;
-        };
-
-        $predicate = function (int $value): bool {
-            return 42 === $value;
-        };
 
         static::assertTrue($maybe->isKnown());
         static::assertTrue($maybe->equals(Maybe::definitely(42)));
@@ -63,8 +48,8 @@ final class MaybeTest extends TestCase
         static::assertFalse($maybe->equals(Maybe::unknown()));
         static::assertEquals(42, $maybe->or(84));
         static::assertSame($maybe, $maybe->orElse($maybe84));
-        static::assertEquals(43, $maybe->to($mapper)->or(84));
-        static::assertTrue($maybe->query($predicate)->or(false));
-        static::assertFalse(Maybe::definitely(43)->query($predicate)->or(true));
+        static::assertEquals(43, $maybe->to(supplier(43))->or(84));
+        static::assertTrue($maybe->query(equality_supplier(42))->or(false));
+        static::assertFalse(Maybe::definitely(43)->query(equality_supplier(42))->or(true));
     }
 }

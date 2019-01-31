@@ -26,6 +26,9 @@
         ]
     },
     "autoload-dev": {
-        "psr-4" : { "Lemonad\\Tests\\": "tests/" }
+        "psr-4" : { "Lemonad\\Tests\\": "tests/" },
+        "files": [
+            "tests/functions.php"
+        ]
     }
 }

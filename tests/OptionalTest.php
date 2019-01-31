@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Lemonad\Tests;
 
-use InvalidArgumentException;
 use Lemonad\Exception\NoSuchValueException;
 use Lemonad\Exception\NullValueException;
 use Lemonad\Optional;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 final class OptionalTest extends TestCase
 {
@@ -55,15 +55,11 @@ final class OptionalTest extends TestCase
         return [
             [
                 null,
-                function (): void {
-                    //
-                }
+                noop()
             ],
             [
                 42,
-                function (int $value): bool {
-                    return 43 === $value;
-                }
+                equality_supplier(43)
             ]
         ];
     }
@@ -71,9 +67,7 @@ final class OptionalTest extends TestCase
     public function testFilterShouldReturnOriginalOptional(): void
     {
         $optionalOf42 = Optional::of(42);
-        $filteredOptional = $optionalOf42->filter(function (int $value): bool {
-            return 42 === $value;
-        });
+        $filteredOptional = $optionalOf42->filter(equality_supplier(42));
 
         static::assertTrue($filteredOptional->isPresent());
         static::assertSame($optionalOf42, $filteredOptional);
@@ -81,18 +75,14 @@ final class OptionalTest extends TestCase
 
     public function testMapShouldReturnEmptyOptional(): void
     {
-        $optional = Optional::ofNullable(null)->map(function (): int {
-            return 42;
-        });
+        $optional = Optional::ofNullable(null)->map(supplier(42));
 
         static::assertTrue($optional->isAbsent());
     }
 
     public function testMapShouldReturnNewOptional(): void
     {
-        $optional = Optional::of(42)->map(function (int $value): int {
-            return $value + 1;
-        });
+        $optional = Optional::of(42)->map(supplier(43));
 
         static::assertTrue($optional->isPresent());
         static::assertTrue($optional->equals(Optional::of(43)));
@@ -100,18 +90,14 @@ final class OptionalTest extends TestCase
 
     public function testFlatMapShouldReturnEmptyOptional(): void
     {
-        $optional = Optional::ofNullable(null)->flatMap(function (): Optional {
-            return Optional::of(42);
-        });
+        $optional = Optional::ofNullable(null)->flatMap(optional_supplier(42));
 
         static::assertTrue($optional->isAbsent());
     }
 
     public function testFlatMapShouldReturnNewOptional(): void
     {
-        $optional = Optional::of(42)->flatMap(function (int $value): Optional {
-            return Optional::of($value + 1);
-        });
+        $optional = Optional::of(42)->flatMap(optional_supplier(43));
 
         static::assertTrue($optional->isPresent());
         static::assertTrue($optional->equals(Optional::of(43)));
@@ -140,9 +126,7 @@ final class OptionalTest extends TestCase
     {
         $foo = $initial;
 
-        Optional::ofNullable($value)->ifPresent(function (int $value) use (&$foo): void {
-            $foo = $value;
-        });
+        Optional::ofNullable($value)->ifPresent(mutation_supplier($foo, $value));
 
         static::assertEquals($expected, $foo);
     }
@@ -164,14 +148,8 @@ final class OptionalTest extends TestCase
     public function testIfPresentOrElse($value, int $expected): void
     {
         $foo = null;
-
-        $consumer = function (int $value) use (&$foo): void {
-            $foo = $value;
-        };
-
-        $action = function () use (&$foo): void {
-            $foo = 43;
-        };
+        $consumer = mutation_supplier($foo, $value);
+        $action = mutation_supplier($foo, 43);
 
         Optional::ofNullable($value)->ifPresentOrElse($consumer, $action);
 
@@ -202,13 +180,9 @@ final class OptionalTest extends TestCase
 
     public function orDataProvider(): array
     {
-        $supplier = function (): Optional {
-            return Optional::of(42);
-        };
-
         return [
-            [null, $supplier, 42],
-            [999, $supplier, 999]
+            [null, optional_supplier(42), 42],
+            [999, optional_supplier(42), 999]
         ];
     }
 
@@ -246,32 +220,31 @@ final class OptionalTest extends TestCase
 
     public function orElseGetDataProvider(): array
     {
-        $supplier = function (): int {
-            return 42;
-        };
-
         return [
-            [null, $supplier, 42],
-            [84, $supplier, 84]
+            [null, supplier(42), 42],
+            [84, supplier(42), 84]
         ];
     }
 
     public function testOrElseThrowShouldReturnValue(): void
     {
-        $value = Optional::of(42)->orElseThrow(function (): InvalidArgumentException {
-            return new InvalidArgumentException('Argh!');
-        });
+        $value = Optional::of(42)->orElseThrow(static::exception());
 
         static::assertEquals(42, $value);
     }
 
     public function testOrElseThrowShouldThrowException(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Argh!');
 
-        Optional::ofNullable(null)->orElseThrow(function (): InvalidArgumentException {
-            return new InvalidArgumentException('Argh!');
-        });
+        Optional::ofNullable(null)->orElseThrow(static::exception());
+    }
+
+    private static function exception(): callable
+    {
+        return function (): RuntimeException {
+            return new RuntimeException('Argh!');
+        };
     }
 }
