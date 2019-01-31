@@ -13,8 +13,14 @@ use Lemonad\Exception\NullValueException;
  */
 final class Optional
 {
+    /**
+     * @var mixed
+     */
     private $value;
 
+    /**
+     * @param mixed $value
+     */
     private function __construct($value = null)
     {
         $this->value = $value;
@@ -42,8 +48,16 @@ final class Optional
         return new static($value);
     }
 
+    /**
+     * Returns an Optional with the specified value that can be null.
+     *
+     * @param mixed $value
+     *
+     * @return Optional
+     */
     public static function ofNullable($value): self
     {
+        /** @noinspection PhpUnhandledExceptionInspection */
         return null === $value
             ? static::empty()
             : static::of($value);
@@ -105,6 +119,12 @@ final class Optional
         return $mapper($this->value);
     }
 
+    /**
+     * Returns Optional's value if it exists, otherwise throws NoSuchValueException.
+     *
+     * @return mixed
+     * @throws NoSuchValueException
+     */
     public function get()
     {
         if ($this->isAbsent()) {

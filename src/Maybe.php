@@ -69,13 +69,26 @@ abstract class Maybe
      */
     abstract public function equals(Maybe $other): bool;
 
+    /**
+     * Creates Maybe containing either definite or unknown value.
+     *
+     * @param mixed $value
+     *
+     * @return Maybe
+     */
     public static function of($value): Maybe
     {
+        /** @noinspection PhpUnhandledExceptionInspection */
         return null === $value
             ? static::unknown()
             : static::definitely($value);
     }
 
+    /**
+     * Creates an empty Maybe.
+     *
+     * @return Maybe
+     */
     public static function unknown(): Maybe
     {
         return new class extends Maybe
@@ -117,6 +130,14 @@ abstract class Maybe
         };
     }
 
+    /**
+     * Creates a Maybe with a non-empty value.
+     *
+     * @param mixed $value
+     *
+     * @return Maybe
+     * @throws NullValueException
+     */
     public static function definitely($value): Maybe
     {
         if (null === $value) {
@@ -125,8 +146,16 @@ abstract class Maybe
 
         return new class($value) extends Maybe
         {
+            /**
+             * @var mixed
+             */
             private $value;
 
+            /**
+             * Creates a new, definite implementation of Maybe.
+             *
+             * @param mixed $value
+             */
             public function __construct($value)
             {
                 $this->value = $value;

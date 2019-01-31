@@ -54,13 +54,13 @@ final class OptionalTest extends TestCase
         return [
             [
                 null,
-                function () {
+                function (): void {
                     //
                 }
             ],
             [
                 42,
-                function (int $value) {
+                function (int $value): bool {
                     return 43 === $value;
                 }
             ]
@@ -70,7 +70,7 @@ final class OptionalTest extends TestCase
     public function testFilterShouldReturnOriginalOptional(): void
     {
         $optionalOf42 = Optional::of(42);
-        $filteredOptional = $optionalOf42->filter(function (int $value) {
+        $filteredOptional = $optionalOf42->filter(function (int $value): bool {
             return 42 === $value;
         });
 
@@ -80,7 +80,7 @@ final class OptionalTest extends TestCase
 
     public function testMapShouldReturnEmptyOptional(): void
     {
-        $optional = Optional::ofNullable(null)->map(function () {
+        $optional = Optional::ofNullable(null)->map(function (): int {
             return 42;
         });
 
@@ -89,7 +89,7 @@ final class OptionalTest extends TestCase
 
     public function testMapShouldReturnNewOptional(): void
     {
-        $optional = Optional::of(42)->map(function (int $value) {
+        $optional = Optional::of(42)->map(function (int $value): int {
             return $value + 1;
         });
 
@@ -99,7 +99,7 @@ final class OptionalTest extends TestCase
 
     public function testFlatMapShouldReturnEmptyOptional(): void
     {
-        $optional = Optional::ofNullable(null)->flatMap(function () {
+        $optional = Optional::ofNullable(null)->flatMap(function (): Optional {
             return Optional::of(42);
         });
 
@@ -108,7 +108,7 @@ final class OptionalTest extends TestCase
 
     public function testFlatMapShouldReturnNewOptional(): void
     {
-        $optional = Optional::of(42)->flatMap(function (int $value) {
+        $optional = Optional::of(42)->flatMap(function (int $value): Optional {
             return Optional::of($value + 1);
         });
 
@@ -139,7 +139,7 @@ final class OptionalTest extends TestCase
     {
         $foo = $initial;
 
-        Optional::ofNullable($value)->ifPresent(function ($value) use (&$foo) {
+        Optional::ofNullable($value)->ifPresent(function (int $value) use (&$foo): void {
             $foo = $value;
         });
 
@@ -164,11 +164,11 @@ final class OptionalTest extends TestCase
     {
         $foo = null;
 
-        $consumer = function ($value) use (&$foo) {
+        $consumer = function (int $value) use (&$foo): void {
             $foo = $value;
         };
 
-        $action = function () use (&$foo) {
+        $action = function () use (&$foo): void {
             $foo = 43;
         };
 
@@ -201,7 +201,7 @@ final class OptionalTest extends TestCase
 
     public function orDataProvider(): array
     {
-        $supplier = function () {
+        $supplier = function (): Optional {
             return Optional::of(42);
         };
 
@@ -245,7 +245,7 @@ final class OptionalTest extends TestCase
 
     public function orElseGetDataProvider(): array
     {
-        $supplier = function () {
+        $supplier = function (): int {
             return 42;
         };
 
@@ -257,7 +257,7 @@ final class OptionalTest extends TestCase
 
     public function testOrElseThrowShouldReturnValue(): void
     {
-        $value = Optional::of(42)->orElseThrow(function () {
+        $value = Optional::of(42)->orElseThrow(function (): \InvalidArgumentException {
             return new \InvalidArgumentException('Argh!');
         });
 
@@ -269,7 +269,7 @@ final class OptionalTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Argh!');
 
-        Optional::ofNullable(null)->orElseThrow(function () {
+        Optional::ofNullable(null)->orElseThrow(function (): \InvalidArgumentException {
             return new \InvalidArgumentException('Argh!');
         });
     }

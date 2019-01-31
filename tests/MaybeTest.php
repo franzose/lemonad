@@ -20,11 +20,11 @@ final class MaybeTest extends TestCase
         $unknown = Maybe::unknown();
         $maybe42 = Maybe::definitely(42);
 
-        $supplier = function () {
+        $supplier = function (): int {
             return 42;
         };
 
-        $callable = function () {
+        $callable = function (): void {
             //
         };
 
@@ -49,11 +49,11 @@ final class MaybeTest extends TestCase
     {
         $maybe = Maybe::definitely(42);
         $maybe84 = Maybe::definitely(84);
-        $mapper = function (int $value) {
+        $mapper = function (int $value): int {
             return $value + 1;
         };
 
-        $predicate = function (int $value) {
+        $predicate = function (int $value): bool {
             return 42 === $value;
         };
 
