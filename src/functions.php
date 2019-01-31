@@ -26,3 +26,20 @@ function maybe($value): Maybe
 {
     return Maybe::of($value);
 }
+
+/**
+ * Creates a new callable which returns a given value untouched.
+ *
+ * @return callable
+ */
+function identity(): callable
+{
+    return
+        /**
+         * @param mixed $value
+         * @return mixed
+         */
+        function ($value) {
+            return $value;
+        };
+}
