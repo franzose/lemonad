@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Lemonad\Tests;
 
+use InvalidArgumentException;
 use Lemonad\Exception\NoSuchValueException;
 use Lemonad\Exception\NullValueException;
 use Lemonad\Optional;
@@ -257,8 +258,8 @@ final class OptionalTest extends TestCase
 
     public function testOrElseThrowShouldReturnValue(): void
     {
-        $value = Optional::of(42)->orElseThrow(function (): \InvalidArgumentException {
-            return new \InvalidArgumentException('Argh!');
+        $value = Optional::of(42)->orElseThrow(function (): InvalidArgumentException {
+            return new InvalidArgumentException('Argh!');
         });
 
         static::assertEquals(42, $value);
@@ -266,11 +267,11 @@ final class OptionalTest extends TestCase
 
     public function testOrElseThrowShouldThrowException(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Argh!');
 
-        Optional::ofNullable(null)->orElseThrow(function (): \InvalidArgumentException {
-            return new \InvalidArgumentException('Argh!');
+        Optional::ofNullable(null)->orElseThrow(function (): InvalidArgumentException {
+            return new InvalidArgumentException('Argh!');
         });
     }
 }

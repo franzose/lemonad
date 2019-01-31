@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Lemonad;
 
+use function is_callable;
 use Lemonad\Exception\NullValueException;
 
 /**
@@ -100,7 +101,7 @@ abstract class Maybe
 
             public function or($other)
             {
-                return \is_callable($other) ? $other() : $other;
+                return is_callable($other) ? $other() : $other;
             }
 
             public function orElse(Maybe $other): Maybe
