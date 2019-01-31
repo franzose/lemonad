@@ -4,18 +4,6 @@ declare(strict_types=1);
 use Lemonad\Optional;
 
 /**
- * Provides a callable that does nothing.
- *
- * @return callable
- */
-function noop(): callable
-{
-    return function (): void {
-        //
-    };
-}
-
-/**
  * Provides a callable that returns the given value.
  *
  * @param mixed $value

@@ -43,3 +43,15 @@ function identity(): callable
             return $value;
         };
 }
+
+/**
+ * Provides a callable that does nothing.
+ *
+ * @return callable
+ */
+function noop(): callable
+{
+    return function (): void {
+        //
+    };
+}
