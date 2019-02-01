@@ -1,6 +1,10 @@
 # Lemonad
 It is a small repository containing implementations of some monads.
 
+1. [Optional](https://github.com/franzose/lemonad#optional)
+2. [Maybe](https://github.com/franzose/lemonad#maybe)
+3. [Try](https://github.com/franzose/lemonad#try)
+
 ## Optional
 `Optional` is useful when you don‘t exactly sure if you‘re dealing with an empty value or some meaningful one. It provides a clean and expressive API.
 
