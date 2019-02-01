@@ -28,6 +28,19 @@ function maybe($value): Maybe
 }
 
 /**
+ * Creates either `Success` of `Failure` Try
+ * based on the result of the given action.
+ *
+ * @param callable $action
+ *
+ * @return LetsTry
+ */
+function lets_try(callable $action): LetsTry
+{
+    return LetsTry::perform($action);
+}
+
+/**
  * Creates a new callable which returns a given value untouched.
  *
  * @return callable

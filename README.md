@@ -113,3 +113,198 @@ echo Maybe::definitely('Brian')->to(function (string $name) {
     return $name . ' Adams';
 }); // will output "Brian Adams"
 ```
+
+## Try
+A Try represents a computation that may either throw an exception or return a value. As `try` is a reserved keyword in PHP and class names are case insensitive, I could not use `Try` for the class name, so I named it `LetsTry`.
+
+```php
+<?php
+declare(strict_types=1);
+
+use Lemonad\LetsTry;
+use function Lemonad\lets_try;
+use function Lemonad\noop;
+use RuntimeException;
+
+LetsTry::perform(function () {
+    return 42;
+})->getOrElse(noop()); // 42
+
+lets_try(function () {
+    throw new RuntimeException('Argh!');
+})->getOrElse(function () {
+    return 42;
+}); // 42
+
+LetsTry::successful(42)->getOrElse(noop()); // 42
+LetsTry::successful(null); // will throw Lemonad\Exception\NullValueException
+
+LetsTry::failure(new RuntimeException('Argh!'))
+    ->getOrElse(function () {
+        return 42;
+    }); // 42
+
+// Successful, do mapping
+lets_try(function () {
+    return 42;
+})->map(function (int $value) {
+    return $value + 1;
+})->getOrElse(noop()); // 43
+
+lets_try(function () {
+    throw new RuntimeException('Argh!');
+})->map(function () {
+    // this callback will not be called,
+    // new instance of `Failure` will be returned instead
+});
+
+// Successful, do mapping
+lets_try(function () {
+    return 42;
+})->flatMap(function (int $value) {
+    return lets_try(function () use ($value) {
+        return $value + 1;
+    });
+})->getOrElse(noop()); // 43
+
+lets_try(function () {
+    throw new RuntimeException('Argh!');
+})->flatMap(function () {
+    // again, this callback will not be called,
+    // new instance of `Failure` will be returned instead
+});
+
+// There's nothing to recover,
+// so the callback will not be called
+lets_try(function () {
+    return 42;
+})->recover(function () {
+    return 43;
+})->getOrElse(noop()); // 42
+
+// Again, there's nothing to recover,
+// so the callback will not be called
+lets_try(function () {
+    return 42;
+})->recoverWith(function () {
+    return lets_try(function () {
+        return 43;
+    });
+})->getOrElse(noop()); // 42
+
+// Here, exception was thrown,
+// so we need to recover from that
+lets_try(function () {
+    throw new RuntimeException('Argh!');
+})->recover(function (RuntimeException $exception) {
+    return $exception->getMessage();
+}); // Argh!
+
+// Again, exception was thrown,
+// so we need to recover from that
+lets_try(function () {
+    throw new RuntimeException('Argh!');
+})->recoverWith(function (RuntimeException $exception) {
+    return lets_try(function () use ($exception) {
+        return $exception->getMessage();
+    });
+}); // Argh!
+
+lets_try(function () {
+    return 42;
+})->orElse(function () {
+    return lets_try(function () {
+        return 43;
+    });
+})->getOrElse(noop()); // 42 as the Try is `Success`
+
+lets_try(function () {
+    throw new RuntimeException('Argh!');
+})->orElse(function () {
+    return lets_try(function () {
+        return 43;
+    });
+})->getOrElse(noop()); // 43 as the Try was `Failure`
+
+// Will perform another Try
+lets_try(function () {
+    return 42;
+})->filterOrElse(
+    function (int $value) {
+        return 42 === $value;
+    },
+    function () {
+        return new RuntimeException('Argh!');
+    }
+);
+
+// Will throw provided RuntimeException,
+// as the predicate is unsatisfied
+lets_try(function () {
+    return 42;
+})->filterOrElse(
+    function (int $value) {
+        return 99 === $value;
+    },
+    function () {
+        return new RuntimeException('Argh!');
+    }
+);
+
+// Will just return another `Failure` Try
+lets_try(function () {
+    throw new RuntimeException('Argh!');
+})->filterOrElse(
+    function (int $value) {
+        return 99 === $value;
+    },
+    function () {
+        return new RuntimeException('Argh!');
+    }
+);
+
+lets_try(function () {
+    return 42;
+})->fold(noop(), function (int $value) {
+    return $value + 1;
+}); // 43
+
+lets_try(function () {
+    throw new RuntimeException('Argh!');
+})->fold(
+    function (RuntimeException $exception) {
+        return $exception->getMessage();
+    },
+    function (int $value) {
+        return $value + 1;
+    }
+); // Argh!
+
+lets_try(function () {
+    return 42;
+})->toOptional(); // Optional which contains value of 42
+
+lets_try(function () {
+    throw new RuntimeException('Argh!');
+})->toOptional(); // An empty Optional
+
+lets_try(function () {
+    return 42;
+})->forEach(function (int $value) {
+    // do something
+});
+
+lets_try(function () {
+    throw new RuntimeException('Argh!');
+})->forEach(function () {
+    // for `Failure`s it is a noop
+});
+
+lets_try(function () {
+    return 42;
+})->isSuccess(); // true
+
+lets_try(function () {
+    throw new RuntimeException('Argh!');
+})->isFailure(); // true
+```
